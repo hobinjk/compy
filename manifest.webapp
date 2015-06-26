@@ -1,0 +1,21 @@
+{
+  "version": "0.0.0",
+  "name": "Compy",
+  "description": "Log Viewer for Firefox OS",
+  "launch_path": "/",
+  "developer": {
+    "name": "James Hobin",
+    "url": "https://github.com/hobinjk"
+  },
+  "activities": {
+    "open": {
+      "filters": {
+        "type": ["text/plain"],
+        "filename": {
+          "pattern": "^[^.]*\\.log$"
+        }
+      },
+      "href": "/"
+    }
+  }
+}

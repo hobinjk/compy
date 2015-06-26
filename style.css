@@ -1,0 +1,77 @@
+body {
+  font-family: "Fira Sans", sans-serif;
+}
+
+.log-item-priority-v,
+.log-item-priority-s {
+  color: #2c393b;
+}
+
+.log-item-priority-d {
+  color: #5f9b0a;
+}
+
+.log-item-priority-i {
+  color: #00aacc;
+}
+
+.log-item-priority-w {
+  color: #cd6723;
+}
+
+.log-item-priority-e {
+  color: #ff4e00;
+}
+
+.log-item-priority-f {
+  color: #b90000;
+}
+
+.log-item-priority {
+  display: block;
+  float: left;
+  width: 3rem;
+  height: 3rem;
+  line-height: 3rem;
+  font-size: 2rem;
+  text-align: center;
+  pointer-events: none;
+}
+
+.log-item-time {
+  text-align: right;
+  float: right;
+  line-height: 3rem;
+  color: #a6a6a6;
+  pointer-events: none;
+}
+
+.log-item {
+  width: 100%;
+  height: 3rem;
+  border-bottom: 1px solid #e7e7e7;
+  margin-bottom: 0px;
+}
+
+.log-item-tag {
+  color: black;
+  line-height: 3rem;
+  pointer-events: none;
+}
+
+.log-drawer {
+  background: #e7e7e7;
+  overflow: hidden;
+  transition: max-height 0.4s;
+  max-height: 0;
+}
+
+.log-drawer-open {
+  margin-top: 0px;
+  overflow: scroll;
+}
+
+.log-drawer-content {
+  padding: 0.5rem;
+  margin: 0;
+}
