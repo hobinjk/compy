@@ -3,36 +3,20 @@ function LogItemList(logItems) {
   this.container.classList.add('container');
 
   var cursor = new LogItemCursor(logItems);
-  var logItemHeight = this.precalculateHeight(cursor);
 
   this.views = [];
-  var y = 0;
-  var index = 0;
   for (; cursor; cursor = cursor.next()) {
     this.addTimeDelta(cursor);
-    var logItemView = new LogItemView(this, cursor.data(),
-                                      index, index * logItemHeight);
-    index++;
+    var logItemView = new LogItemView(cursor.data());
     this.views.push(logItemView);
   }
 
+  var lastContainer = this.container;
   this.views.forEach(function(view) {
-    this.container.appendChild(view.container);
-  }.bind(this));
+    lastContainer.appendChild(view.container);
+    lastContainer = view.getNextContainer();
+  });
 }
-
-/**
- * Assumes that logItemView's height is in rem
- * @param {LogItemCursor} cursor
- * @return {number}
- */
-LogItemList.prototype.precalculateHeight = function(cursor) {
-  var logItemView = new LogItemView(this, cursor.data(), 0, 0);
-  document.body.appendChild(logItemView.listEntry);
-  var height = logItemView.listEntry.getBoundingClientRect().height;
-  document.body.removeChild(logItemView.listEntry);
-  return height;
-};
 
 /**
  * @param {LogItemCursor} logItemCursor
@@ -67,31 +51,4 @@ LogItemList.prototype.formatTimeDelta = function(timeDeltaMs) {
     return '+' + timeDeltaM + 'm';
   }
   return '+' + Math.floor(timeDeltaM / 60) + 'h';
-};
-
-/**
- * Open a specific log item
- * @param {number} index
- */
-LogItemList.prototype.open = function(index) {
-  console.log('Opening ' + index);
-  var openingView = this.views[index];
-  var height = openingView.drawer.childNodes[0].getBoundingClientRect().height;
-  for (var i = index + 1; i < this.views.length; i++) {
-    var view = this.views[i];
-    view.setTargetY(view.getTargetY() + height);
-  }
-};
-
-/**
- * Close a specific log item
- * @param {number} index
- */
-LogItemList.prototype.close = function(index) {
-  var openingView = this.views[index];
-  var height = openingView.drawer.getBoundingClientRect().height;
-  for (var i = index + 1; i < this.views.length; i++) {
-    var view = this.views[i];
-    view.setTargetY(view.getTargetY() - height);
-  }
 };

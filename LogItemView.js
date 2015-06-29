@@ -1,51 +1,25 @@
-function LogItemView(parent, logItem, index, baseY) {
-  this.parent = parent;
-  this.index = index;
-
+function LogItemView(logItem) {
   this.container = document.createElement('div');
-  this.container.classList.add('log-container');
+  this.container.classList.add('log-item-view');
 
-  this.listEntry = this.createListEntry(logItem);
-  this.drawer = this.createDrawer(logItem);
-
-  this.container.appendChild(this.listEntry);
-  this.container.appendChild(this.drawer);
+  var listEntry = this.createListEntry(logItem);
+  var drawer = this.createDrawer(logItem);
+  this.drawerContent = drawer.childNodes[0];
 
   this.isOpen = false;
+  this.followingLogItemsContainer = document.createElement('div');
+  this.followingLogItemsContainer.classList.add('log-item-container');
 
-  this.setY(baseY);
-  this.physicsModel = new LinearModel(this.getY.bind(this),
-                                      this.setY.bind(this), 0.01);
-  this.physicsModel.register();
+  this.container.appendChild(listEntry);
+  this.container.appendChild(drawer);
+  this.container.appendChild(this.followingLogItemsContainer);
 }
 
 /**
- * @return {number}
+ * @return {DOMElement}
  */
-LogItemView.prototype.getY = function() {
-  return this.y;
-};
-
-/**
- * @param {number} y
- */
-LogItemView.prototype.setTargetY = function(y) {
-  this.physicsModel.setPoint = y;
-};
-
-/**
- * @return {number}
- */
-LogItemView.prototype.getTargetY = function() {
-  return this.physicsModel.setPoint;
-};
-
-/**
- * @param {number} y
- */
-LogItemView.prototype.setY = function(y) {
-  this.y = y;
-  this.container.style.transform = 'translateY(' + this.y + 'px)';
+LogItemView.prototype.getNextContainer = function() {
+  return this.followingLogItemsContainer;
 };
 
 /**
@@ -100,10 +74,12 @@ LogItemView.prototype.createDrawer = function(data) {
  */
 LogItemView.prototype.toggle = function() {
   console.log('Opening');
-  if (this.isOpen) {
-    this.parent.close(this.index);
-  } else {
-    this.parent.open(this.index);
+  var newTransform = 'translateY(0px)';
+  var drawerHeight = this.drawerContent.getBoundingClientRect().height;
+
+  if (!this.isOpen) {
+    newTransform = 'translateY(' + drawerHeight + 'px)';
   }
+  this.followingLogItemsContainer.style.transform = newTransform;
   this.isOpen = !this.isOpen;
 };
