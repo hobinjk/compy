@@ -3,6 +3,10 @@ body {
   font-family: "Fira Sans", sans-serif;
 }
 
+.log-item-view {
+  overflow: hidden;
+}
+
 .log-item-priority-v,
 .log-item-priority-s {
   color: #2c393b;

@@ -1,13 +1,13 @@
 function LogItemList(logItems) {
   this.container = document.createElement('div');
-  this.container.classList.add('container');
+  this.container.classList.add('log-item-view');
 
   var cursor = new LogItemCursor(logItems);
 
   this.views = [];
   for (; cursor; cursor = cursor.next()) {
     this.addTimeDelta(cursor);
-    var logItemView = new LogItemView(cursor.data());
+    var logItemView = new LogItemView(this, cursor.data());
     this.views.push(logItemView);
   }
 
@@ -16,6 +16,9 @@ function LogItemList(logItems) {
     lastContainer.appendChild(view.container);
     lastContainer = view.getNextContainer();
   });
+
+  lastContainer.style.background = 'white';
+  this.overflowContainer = lastContainer;
 }
 
 /**
@@ -51,4 +54,14 @@ LogItemList.prototype.formatTimeDelta = function(timeDeltaMs) {
     return '+' + timeDeltaM + 'm';
   }
   return '+' + Math.floor(timeDeltaM / 60) + 'h';
+};
+
+/**
+ * Add height to the overflow container
+ * Required to be hackily performant
+ * @param {number} height
+ */
+LogItemList.prototype.addHeight = function(height) {
+  var originalHeight = this.overflowContainer.getBoundingClientRect().height;
+  this.overflowContainer.style.height = (originalHeight + height) + 'px';
 };

@@ -1,4 +1,6 @@
-function LogItemView(logItem) {
+function LogItemView(parent, logItem) {
+  this.parent = parent;
+
   this.container = document.createElement('div');
   this.container.classList.add('log-item-view');
 
@@ -7,6 +9,8 @@ function LogItemView(logItem) {
   this.drawerContent = drawer.childNodes[0];
 
   this.isOpen = false;
+  this.drawerHeight = -1;
+
   this.followingLogItemsContainer = document.createElement('div');
   this.followingLogItemsContainer.classList.add('log-item-container');
 
@@ -70,16 +74,38 @@ LogItemView.prototype.createDrawer = function(data) {
 };
 
 /**
+ * Get the drawer height, using the cached height if available
+ */
+LogItemView.prototype.getDrawerHeight = function() {
+  if (this.drawerHeight < 0) {
+    this.drawerHeight = this.drawerContent.getBoundingClientRect().height;
+  }
+  return this.drawerHeight;
+};
+
+/**
  * Toggle the open state of the drawer
  */
 LogItemView.prototype.toggle = function() {
-  console.log('Opening');
   var newTransform = 'translateY(0px)';
-  var drawerHeight = this.drawerContent.getBoundingClientRect().height;
+
 
   if (!this.isOpen) {
-    newTransform = 'translateY(' + drawerHeight + 'px)';
+    newTransform = 'translateY(' + this.getDrawerHeight() + 'px)';
+    this.parent.addHeight(this.getDrawerHeight());
   }
+
   this.followingLogItemsContainer.style.transform = newTransform;
+  var reduceHeight = function() {
+    this.parent.addHeight(-this.getDrawerHeight());
+    this.followingLogItemsContainer.removeEventListener('transform-end',
+                                                        reduceHeight, false);
+  }.bind(this);
+
+  if (this.isOpen) {
+    this.followingLogItemsContainer.addEventListener('transform-end',
+                                                     reduceHeight, false);
+  }
+
   this.isOpen = !this.isOpen;
 };
