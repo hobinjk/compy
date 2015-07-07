@@ -13,7 +13,10 @@ Parser.prototype.parse = function(logString) {
   var items = [];
 
   while (this.canPeek(1)) {
-    items.push(this.parseItem());
+    var item = this.parseItem();
+    if (item) {
+      items.push(item);
+    }
   }
   return items;
 };
@@ -80,6 +83,14 @@ Parser.prototype.takeUntil = function(chr) {
  */
 Parser.prototype.parseItem = function() {
   // Format will be MM-DD HH:MM:SS.mmm PidPid TidTid P tag: message
+  var lineRegex = /\d\d-\d\d \d\d:\d\d:\d\d\.\d\d\d/;
+  var lineRegexLength = 'MM-DD HH:MM:SS.mmm'.length;
+  // Otherwise skip
+  if (!lineRegex.test(this.peek(lineRegexLength))) {
+    this.takeUntil('\n');
+    this.take(1);
+    return null;
+  }
   var year = new Date().getFullYear();
 
   var month = this.takeInt(2);
@@ -120,8 +131,7 @@ Parser.prototype.parseItem = function() {
   if (this.canPeek(1)) {
     this.take(1);
 
-    while (!(/\d\d-\d\d \d\d:\d\d:\d\d\.\d\d\d/)
-            .test(this.peek('MM-DD HH:MM:SS.mmm'.length))) {
+    while (!lineRegex.test(this.peek(lineRegexLength))) {
       message += '\n' + this.takeUntil('\n');
       this.take(1);
       break;
