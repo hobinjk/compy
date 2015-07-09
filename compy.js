@@ -1,15 +1,27 @@
+var fileInput = document.createElement('input');
+fileInput.type = 'file';
+fileInput.addEventListener('change', function() {
+  readFile(this.files[0]);
+});
+document.body.appendChild(fileInput);
+
 if (navigator.mozSetMessageHandler) {
   navigator.mozSetMessageHandler('activity', function(activity) {
     if (activity.source.name === 'open') {
-      var reader = new FileReader();
-      reader.onload = function(event) {
-        console.log('read');
-        displayLog(event.target.result);
-      };
-
-      reader.readAsText(activity.source.filename);
+      readFile(activity.source.blobs[0]);
     }
   });
+}
+
+function readFile(fileBlob) {
+  var reader = new FileReader();
+  reader.onload = function(event) {
+    console.log('read');
+    displayLog(event.target.result);
+  };
+
+  reader.readAsText(fileBlob);
+  fileInput.style.display = 'none';
 }
 
 function displayLog(file) {
