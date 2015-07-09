@@ -8,7 +8,11 @@ document.body.appendChild(fileInput);
 if (navigator.mozSetMessageHandler) {
   navigator.mozSetMessageHandler('activity', function(activity) {
     if (activity.source.name === 'open') {
-      readFile(activity.source.blobs[0]);
+      if (activity.source.blobs) {
+        readFile(activity.source.blobs[0]);
+      } else if (activity.source.data.blob) {
+        readFile(activity.source.data.blob);
+      }
     }
   });
 }
